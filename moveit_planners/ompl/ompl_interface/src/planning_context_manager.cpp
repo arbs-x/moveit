@@ -66,6 +66,8 @@
 #include <ompl/geometric/planners/prm/LazyPRMstar.h>
 #include <ompl/geometric/planners/prm/SPARS.h>
 #include <ompl/geometric/planners/prm/SPARStwo.h>
+#include <ompl/geometric/planners/experience/ERT.h>
+#include <ompl/geometric/planners/experience/ERTConnect.h>
 
 #include <moveit/ompl_interface/parameterization/joint_space/joint_model_state_space_factory.h>
 #include <moveit/ompl_interface/parameterization/joint_space/joint_model_state_space.h>
@@ -290,6 +292,8 @@ void ompl_interface::PlanningContextManager::registerDefaultPlanners()
   registerPlannerAllocatorHelper<og::SPARStwo>("geometric::SPARStwo");
   registerPlannerAllocatorHelper<og::STRIDE>("geometric::STRIDE");
   registerPlannerAllocatorHelper<og::TRRT>("geometric::TRRT");
+  registerPlannerAllocatorHelper<og::ERT>("geometric::ERT");
+  registerPlannerAllocatorHelper<og::ERTConnect>("geometric::ERTConnect");
 }
 
 void ompl_interface::PlanningContextManager::registerDefaultStateSpaces()
