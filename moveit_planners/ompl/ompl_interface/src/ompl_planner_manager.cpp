@@ -35,6 +35,7 @@
 /* Author: Ioan Sucan, Dave Coleman */
 
 #include <moveit/ompl_interface/ompl_interface.h>
+#include <moveit/ompl_interface/xnav_ompl_interface.h>
 #include <moveit/planning_interface/planning_interface.h>
 #include <moveit/planning_scene/planning_scene.h>
 #include <moveit/robot_state/conversions.h>
@@ -109,12 +110,16 @@ public:
     if (!ns.empty())
       nh_ = ros::NodeHandle(ns);
     ompl_interface_.reset(new OMPLInterface(model, nh_));
+    xnav_ompl_interface_.reset(new XNavOMPLInterface(model, nh_));
     std::string ompl_ns = ns.empty() ? "ompl" : ns + "/ompl";
     dynamic_reconfigure_server_.reset(
         new dynamic_reconfigure::Server<OMPLDynamicReconfigureConfig>(ros::NodeHandle(nh_, ompl_ns)));
     dynamic_reconfigure_server_->setCallback(
         std::bind(&OMPLPlannerManager::dynamicReconfigureCallback, this, std::placeholders::_1, std::placeholders::_2));
     config_settings_ = ompl_interface_->getPlannerConfigurations();
+
+    planning_interface::PlannerConfigurationMap xnav_config_settings_ = xnav_ompl_interface_->getPlannerConfigurations();
+    config_settings_.insert(xnav_config_settings_.begin(),xnav_config_settings_.end());
     return true;
   }
 
@@ -131,25 +136,48 @@ public:
   void getPlanningAlgorithms(std::vector<std::string>& algs) const override
   {
     const planning_interface::PlannerConfigurationMap& pconfig = ompl_interface_->getPlannerConfigurations();
+    const planning_interface::PlannerConfigurationMap& xnav_pconfig = xnav_ompl_interface_->getPlannerConfigurations();
     algs.clear();
-    algs.reserve(pconfig.size());
+    // algs.reserve(pconfig.size());
+    algs.reserve(pconfig.size() + xnav_pconfig.size());
     for (const std::pair<const std::string, planning_interface::PlannerConfigurationSettings>& config : pconfig)
       algs.push_back(config.first);
+    for (const std::pair<const std::string, planning_interface::PlannerConfigurationSettings>& config : xnav_pconfig)
+        algs.push_back(config.first);
   }
 
+  // TODO: add XNav part. Maybe just duplicate?
   void setPlannerConfigurations(const planning_interface::PlannerConfigurationMap& pconfig) override
   {
     // this call can add a few more configs than we pass in (adds defaults)
     ompl_interface_->setPlannerConfigurations(pconfig);
     // so we read the configs instead of just setting pconfig
     PlannerManager::setPlannerConfigurations(ompl_interface_->getPlannerConfigurations());
+
+    // this call can add a few more configs than we pass in (adds defaults)
+    xnav_ompl_interface_->setPlannerConfigurations(pconfig);
+    // so we read the configs instead of just setting pconfig
+    PlannerManager::setPlannerConfigurations(xnav_ompl_interface_->getPlannerConfigurations());
   }
 
   planning_interface::PlanningContextPtr getPlanningContext(const planning_scene::PlanningSceneConstPtr& planning_scene,
                                                             const planning_interface::MotionPlanRequest& req,
                                                             moveit_msgs::MoveItErrorCodes& error_code) const override
   {
-    return ompl_interface_->getPlanningContext(planning_scene, req, error_code);
+    std::cout << "\n\n ompl_interface/ompl_planner_manager.cpp/getPlanningContext()" << std::endl;
+
+    // TODO: read the groups to be treated differently from config file
+    if (req.group_name == "base" || req.group_name == "full")
+    {
+      std::cout << "\n\n returning XNav ompl_interface_ planning context \n\n" << std::endl;
+      return xnav_ompl_interface_->getPlanningContext(planning_scene, req, error_code);
+      // return planning_interface::PlanningContextPtr();
+    }
+    else
+    {
+        std::cout << "\n\n returning default ompl_interface_ planning context \n\n" << std::endl;
+        return ompl_interface_->getPlanningContext(planning_scene, req, error_code);
+    }
   }
 
 private:
@@ -170,7 +198,7 @@ private:
   /*
   void displayRandomValidStates()
   {
-    ompl_interface::ModelBasedPlanningContextPtr pc = ompl_interface_->getLastPlanningContext();
+    ompl_interface::XNavModelBasedPlanningContextPtr pc = ompl_interface_->getLastPlanningContext();
     if (!pc || !pc->getPlanningScene())
     {
       ROS_ERROR("No planning context to sample states for");
@@ -221,7 +249,7 @@ private:
   void displayPlannerData(const planning_scene::PlanningSceneConstPtr& planning_scene,
                           const std::string &link_name) const
   {
-    ompl_interface::ModelBasedPlanningContextPtr pc = ompl_interface_->getLastPlanningContext();
+    ompl_interface::XNavModelBasedPlanningContextPtr pc = ompl_interface_->getLastPlanningContext();
     if (pc)
     {
       ompl::base::PlannerData pd(pc->getOMPLSimpleSetup()->getSpaceInformation());
@@ -303,6 +331,7 @@ private:
   ros::NodeHandle nh_;
   std::unique_ptr<dynamic_reconfigure::Server<OMPLDynamicReconfigureConfig>> dynamic_reconfigure_server_;
   std::unique_ptr<OMPLInterface> ompl_interface_;
+  std::unique_ptr<XNavOMPLInterface> xnav_ompl_interface_;
   std::unique_ptr<std::thread> pub_valid_states_thread_;
   bool display_random_valid_states_{ false };
   ros::Publisher pub_markers_;

@@ -18,6 +18,15 @@ add_library(${MOVEIT_LIB_NAME}
   src/detail/constrained_sampler.cpp
   src/detail/constrained_valid_state_sampler.cpp
   src/detail/constrained_goal_sampler.cpp
+
+  src/xnav_ompl_interface.cpp
+  src/xnav_planning_context_manager.cpp
+  src/xnav_model_based_planning_context.cpp
+
+  src/parameterization/xnav_model_based_state_space.cpp
+
+  src/detail/xnav_state_validity_checker.cpp
+  src/detail/xnav_constrained_goal_sampler.cpp
 )
 set_target_properties(${MOVEIT_LIB_NAME} PROPERTIES VERSION "${${PROJECT_NAME}_VERSION}")
 
