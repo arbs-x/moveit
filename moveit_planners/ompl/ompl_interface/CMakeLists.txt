@@ -1,8 +1,11 @@
 set(MOVEIT_LIB_NAME moveit_ompl_interface)
 
 add_library(${MOVEIT_LIB_NAME}
-  src/ompl_interface.cpp
+  # THAT'S THE MAIN CLASS FOR THE OMPL PLUGIN
   src/planning_context_manager.cpp
+
+  # THAT'S THE MAIN (DEFAULT) PIPELINE FOR MANIPULATION PLANNING
+  src/ompl_interface.cpp
   src/model_based_planning_context.cpp
   src/parameterization/model_based_state_space.cpp
   src/parameterization/model_based_state_space_factory.cpp
@@ -19,12 +22,11 @@ add_library(${MOVEIT_LIB_NAME}
   src/detail/constrained_valid_state_sampler.cpp
   src/detail/constrained_goal_sampler.cpp
 
+  # THAT'S THE ADDED PIPELINE FOR NAVIGATION PLANNING
   src/xnav_ompl_interface.cpp
   src/xnav_planning_context_manager.cpp
   src/xnav_model_based_planning_context.cpp
-
   src/parameterization/xnav_model_based_state_space.cpp
-
   src/detail/xnav_state_validity_checker.cpp
   src/detail/xnav_constrained_goal_sampler.cpp
 )

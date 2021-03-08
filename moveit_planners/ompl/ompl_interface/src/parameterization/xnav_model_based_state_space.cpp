@@ -277,7 +277,6 @@ ompl::base::StateSamplerPtr ompl_interface::XNavModelBasedStateSpace::allocDefau
 
     void sampleUniform(ompl::base::State* state) override
     {
-      std::cout << "x" << std::endl;
       // joint_model_group_->getVariableRandomPositions(moveit_rng_, state->as<StateType>()->values, *joint_bounds_);
       double *group_state = new double[joint_model_group_->getVariableCount()];
       joint_model_group_->getVariableRandomPositions(moveit_rng_, group_state, *joint_bounds_);

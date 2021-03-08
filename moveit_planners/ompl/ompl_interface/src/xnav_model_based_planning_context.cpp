@@ -375,24 +375,20 @@ void ompl_interface::XNavModelBasedPlanningContext::useConfig()
   }
 
   // call the setParams() after setup(), so we know what the params are
-  std::cout << "\n 0 ==================" << std::endl;
-  std::cout << ompl_simple_setup_->getStateSpace()->getName() << std::endl;
-  std::cout << ompl_simple_setup_->getStateSpace()->getType() << std::endl;
-  ompl_simple_setup_->getStateSpace()->printSettings(std::cout);
-  ompl_simple_setup_->getStateSpace()->list(std::cout);
-  std::cout << "\n 1 ==================" << std::endl;
-  ompl_simple_setup_->print(std::cout);
   ompl_simple_setup_->getSpaceInformation()->setup();
-  std::cout << "\n 2 ==================" << std::endl;
-  // ompl_simple_setup_->print(std::cout);
   ompl_simple_setup_->getSpaceInformation()->params().setParams(cfg, true);
-  std::cout << "\n 3 ==================" << std::endl;
-  // ompl_simple_setup_->print(std::cout);
   // call setup() again for possibly new param values
   ompl_simple_setup_->getSpaceInformation()->setup();
-  std::cout << "\n 4 ==================" << std::endl;
-  ompl_simple_setup_->getSpaceInformation()->probabilityOfValidState(3);
-  std::cout << "\n 5 ==================" << std::endl;
+
+  // FOR DEBUGING PURPOSES
+  // std::cout << "\n =====================================" << std::endl;
+  // std::cout << ompl_simple_setup_->getStateSpace()->getName() << std::endl;
+  // std::cout << ompl_simple_setup_->getStateSpace()->getType() << std::endl;
+  // ompl_simple_setup_->getStateSpace()->printSettings(std::cout);
+  // ompl_simple_setup_->getStateSpace()->list(std::cout);
+  // ompl_simple_setup_->print(std::cout);
+  // ompl_simple_setup_->getSpaceInformation()->probabilityOfValidState(300);
+  // std::cout << "=====================================" << std::endl;
 }
 
 void ompl_interface::XNavModelBasedPlanningContext::setPlanningVolume(const moveit_msgs::WorkspaceParameters& wparams)
@@ -669,8 +665,6 @@ void ompl_interface::XNavModelBasedPlanningContext::stopSampling()
 
 void ompl_interface::XNavModelBasedPlanningContext::preSolve()
 {
-  std::cout << "pre solve" << std::endl;
-
   // clear previously computed solutions
   ompl_simple_setup_->getProblemDefinition()->clearSolutionPaths();
   const ob::PlannerPtr planner = ompl_simple_setup_->getPlanner();
@@ -682,9 +676,6 @@ void ompl_interface::XNavModelBasedPlanningContext::preSolve()
 
 void ompl_interface::XNavModelBasedPlanningContext::postSolve()
 {
-  std::cout << "post solve" << std::endl;
-
-
   stopSampling();
   int v = ompl_simple_setup_->getSpaceInformation()->getMotionValidator()->getValidMotionCount();
   int iv = ompl_simple_setup_->getSpaceInformation()->getMotionValidator()->getInvalidMotionCount();
@@ -696,9 +687,6 @@ void ompl_interface::XNavModelBasedPlanningContext::postSolve()
 
 bool ompl_interface::XNavModelBasedPlanningContext::solve(planning_interface::MotionPlanResponse& res)
 {
-  std::cout << "solve 1" << std::endl;
-
-
   if (solve(request_.allowed_planning_time, request_.num_planning_attempts))
   {
     double ptime = getLastPlanTime();
@@ -782,9 +770,6 @@ bool ompl_interface::XNavModelBasedPlanningContext::solve(planning_interface::Mo
 
 bool ompl_interface::XNavModelBasedPlanningContext::solve(double timeout, unsigned int count)
 {
-  std::cout << "solve 3" << std::endl;
-
-
   moveit::tools::Profiler::ScopedBlock sblock("PlanningContext:Solve");
   ompl::time::point start = ompl::time::now();
   preSolve();

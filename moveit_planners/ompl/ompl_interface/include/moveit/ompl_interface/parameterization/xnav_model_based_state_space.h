@@ -74,6 +74,7 @@ struct XNavModelBasedStateSpaceSpecification
 
 OMPL_CLASS_FORWARD(XNavModelBasedStateSpace);
 
+// TODO: allow inheriting from different spaces, potentially coming from the config file
 class XNavModelBasedStateSpace : public ompl::base::DubinsStateSpace
 {
 public:

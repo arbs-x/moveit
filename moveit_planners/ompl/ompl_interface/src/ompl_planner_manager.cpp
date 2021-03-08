@@ -164,19 +164,16 @@ public:
                                                             const planning_interface::MotionPlanRequest& req,
                                                             moveit_msgs::MoveItErrorCodes& error_code) const override
   {
-    std::cout << "\n\n ompl_interface/ompl_planner_manager.cpp/getPlanningContext()" << std::endl;
-
     // TODO: read the groups to be treated differently from config file
-    if (req.group_name == "base" || req.group_name == "full")
+    if (req.group_name == "base")
     {
-      std::cout << "\n\n returning XNav ompl_interface_ planning context \n\n" << std::endl;
+      ROS_INFO_NAMED(LOGNAME, "Using planning context from XNav ompl_interface.");
       return xnav_ompl_interface_->getPlanningContext(planning_scene, req, error_code);
-      // return planning_interface::PlanningContextPtr();
     }
     else
     {
-        std::cout << "\n\n returning default ompl_interface_ planning context \n\n" << std::endl;
-        return ompl_interface_->getPlanningContext(planning_scene, req, error_code);
+      ROS_INFO_NAMED(LOGNAME, "Using planning context from default ompl_interface.");
+      return ompl_interface_->getPlanningContext(planning_scene, req, error_code);
     }
   }
 
