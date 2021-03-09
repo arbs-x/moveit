@@ -132,9 +132,7 @@ void ompl_interface::XNavModelBasedPlanningContext::configure(const ros::NodeHan
   //     ROS_INFO_NAMED(LOGNAME, "Using precomputed interpolation states");
   //   }
   // }
-  std::cout << "before" << std::endl;
   useConfig();
-  std::cout << "getGoal: " << ompl_simple_setup_->getGoal() << std::endl;
   if (ompl_simple_setup_->getGoal())
     ompl_simple_setup_->setup();
 }
