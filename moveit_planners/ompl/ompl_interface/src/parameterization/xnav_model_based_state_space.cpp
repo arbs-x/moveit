@@ -229,7 +229,22 @@ double ompl_interface::XNavModelBasedStateSpace::getMeasure() const
 void ompl_interface::XNavModelBasedStateSpace::setPlanningVolume(double minX, double maxX, double minY, double maxY,
                                                              double minZ, double maxZ)
 {
+  // TODO: somehow get a definition of the space to decide wether the bounds are for R2+something or R3+something
+  // std::cout <<"\n\n" << getDimension() << std::endl;
   for (std::size_t i = 0; i < joint_model_vector_.size(); ++i)
+  {
+    joint_bounds_storage_[i][0].min_position_ = minX;
+    joint_bounds_storage_[i][0].max_position_ = maxX;
+    joint_bounds_storage_[i][1].min_position_ = minY;
+    joint_bounds_storage_[i][1].max_position_ = maxY;
+
+    ompl::base::RealVectorBounds b(2);
+    b.low[0] = minX;
+    b.low[1] = minY;
+    b.high[0] = maxX;
+    b.high[1] = maxY;
+    setBounds(b);
+
     if (joint_model_vector_[i]->getType() == moveit::core::JointModel::PLANAR)
     {
       joint_bounds_storage_[i][0].min_position_ = minX;
@@ -262,6 +277,7 @@ void ompl_interface::XNavModelBasedStateSpace::setPlanningVolume(double minX, do
       b.high[2] = maxZ;
       setBounds(b);
     }
+  }
 }
 
 ompl::base::StateSamplerPtr ompl_interface::XNavModelBasedStateSpace::allocDefaultStateSampler() const
