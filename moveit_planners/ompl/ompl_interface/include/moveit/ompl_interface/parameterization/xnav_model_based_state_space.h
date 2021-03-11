@@ -42,7 +42,7 @@
 #include <moveit/kinematic_constraints/kinematic_constraint.h>
 #include <moveit/constraint_samplers/constraint_sampler.h>
 
-#include <ompl/base/spaces/DubinsStateSpace.h>
+#include <ompl/base/spaces/ReedsSheppStateSpace.h>
 
 
 namespace ompl_interface
@@ -75,10 +75,10 @@ struct XNavModelBasedStateSpaceSpecification
 OMPL_CLASS_FORWARD(XNavModelBasedStateSpace);
 
 // TODO: allow inheriting from different spaces, potentially coming from the config file
-class XNavModelBasedStateSpace : public ompl::base::DubinsStateSpace
+class XNavModelBasedStateSpace : public ompl::base::ReedsSheppStateSpace
 {
 public:
-  class StateType : public ompl::base::DubinsStateSpace::StateType
+  class StateType : public ompl::base::ReedsSheppStateSpace::StateType
   {
   public:
     enum
@@ -90,7 +90,7 @@ public:
       IS_GOAL_STATE = 16
     };
 
-    StateType() : ompl::base::DubinsStateSpace::StateType(), tag(-1), flags(0), distance(0.0)
+    StateType() : ompl::base::ReedsSheppStateSpace::StateType(), tag(-1), flags(0), distance(0.0)
     {
     }
 

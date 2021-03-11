@@ -43,7 +43,7 @@ constexpr char LOGNAME[] = "xnav_model_based_state_space";
 }  // namespace ompl_interface
 
 ompl_interface::XNavModelBasedStateSpace::XNavModelBasedStateSpace(XNavModelBasedStateSpaceSpecification spec)
-  : ompl::base::DubinsStateSpace(), spec_(std::move(spec))
+  : ompl::base::ReedsSheppStateSpace(), spec_(std::move(spec))
 {
   // set the state space name
   setName(spec_.joint_model_group_->getName());
@@ -285,7 +285,7 @@ ompl::base::StateSamplerPtr ompl_interface::XNavModelBasedStateSpace::allocDefau
   class DefaultStateSampler : public ompl::base::StateSampler
   {
   public:
-    DefaultStateSampler(const ompl::base::DubinsStateSpace* space, const moveit::core::JointModelGroup* group,
+    DefaultStateSampler(const ompl::base::ReedsSheppStateSpace* space, const moveit::core::JointModelGroup* group,
                         const moveit::core::JointBoundsVector* joint_bounds)
       : ompl::base::StateSampler(space), joint_model_group_(group), joint_bounds_(joint_bounds)
     {
@@ -341,7 +341,7 @@ ompl::base::StateSamplerPtr ompl_interface::XNavModelBasedStateSpace::allocDefau
 void ompl_interface::XNavModelBasedStateSpace::printSettings(std::ostream& out) const
 {
   out << "XNavModelBasedStateSpace '" << getName() << "' at " << this << std::endl;
-  ompl::base::DubinsStateSpace::printSettings(out);
+  ompl::base::ReedsSheppStateSpace::printSettings(out);
 }
 
 void ompl_interface::XNavModelBasedStateSpace::printState(const ompl::base::State* state, std::ostream& out) const

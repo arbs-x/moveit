@@ -198,7 +198,7 @@ ompl_interface::XNavModelBasedPlanningContext::getProjectionEvaluator(const std:
   //     return ob::ProjectionEvaluatorPtr(new ProjectionEvaluatorJointValue(this, j));
   // }
   // else
-    ROS_ERROR_NAMED(LOGNAME, "Unable to allocate projection evaluator based on description: '%s'", peval.c_str());
+    // ROS_ERROR_NAMED(LOGNAME, "Unable to allocate projection evaluator based on description: '%s'", peval.c_str());
   return ob::ProjectionEvaluatorPtr();
 }
 
